@@ -1,0 +1,487 @@
+CREATE TABLE UNIVERSITY(
+        UNIVERSITY_ID INT PRIMARY KEY,
+        UNIVERSITY_NAME VARCHAR(100),
+        UNI_ADDRESS VARCHAR(100),
+        REP_NAME VARCHAR(100),
+        UNIVERSITY_EMAIL VARCHAR(100),
+        UNI_PHONE_NUMBER INT
+);
+CREATE TABLE DEPARTMENT(
+    DEPART_NAME VARCHAR(100),
+    UNIVERSITY_ID INT,
+    PRIMARY KEY(DEPART_NAME,UNIVERSITY_ID),
+    FOREIGN KEY (UNIVERSITY_ID ) REFERENCES UNIVERSITY(UNIVERSITY_ID )
+);
+CREATE TABLE INSTRUCTORS(
+    INSTRUCTOR_NAME VARCHAR(100),
+    UNIVERSITY_ID INT,
+    INSTR_ID INT,
+    DEPART_NAME VARCHAR(100),
+    PRIMARY KEY (UNIVERSITY_ID,INSTR_ID),
+    FOREIGN KEY (UNIVERSITY_ID ) REFERENCES UNIVERSITY(UNIVERSITY_ID ),
+    FOREIGN KEY (DEPART_NAME,UNIVERSITY_ID) REFERENCES DEPARTMENT(DEPART_NAME,UNIVERSITY_ID )
+
+);
+CREATE TABLE COURSE(
+    COURSE_ID INT,
+    COURSE_NAME VARCHAR(100),
+    UNIVERSITY_ID INT,
+    YEAR INT,
+    SEMESTER VARCHAR(100),
+    PRIMARY KEY(COURSE_ID,UNIVERSITY_ID),
+    FOREIGN KEY (UNIVERSITY_ID ) REFERENCES UNIVERSITY(UNIVERSITY_ID )
+);
+CREATE TABLE TEACHES(
+    INSTR_ID INT,
+    COURSE_ID INT,
+    UNIVERSITY_ID INT,
+    PRIMARY KEY(INSTR_ID,UNIVERSITY_ID,COURSE_ID),
+    FOREIGN KEY (UNIVERSITY_ID ) REFERENCES UNIVERSITY(UNIVERSITY_ID ),
+    FOREIGN KEY (UNIVERSITY_ID,INSTR_ID) REFERENCES INSTRUCTORS(UNIVERSITY_ID,INSTR_ID),
+    FOREIGN KEY (COURSE_ID,UNIVERSITY_ID) REFERENCES COURSE(COURSE_ID,UNIVERSITY_ID) 
+);
+
+
+
+
+CREATE TABLE COURSE_OFFEREDBY (
+    COURSE_ID INT,
+    DEPART_NAME VARCHAR(100),
+    UNIVERSITY_ID INT,
+    PRIMARY KEY(COURSE_ID,DEPART_NAME,UNIVERSITY_ID),
+    FOREIGN KEY (UNIVERSITY_ID ) REFERENCES UNIVERSITY(UNIVERSITY_ID ),
+    FOREIGN KEY (DEPART_NAME, UNIVERSITY_ID)
+    REFERENCES DEPARTMENT(DEPART_NAME, UNIVERSITY_ID),
+    FOREIGN KEY (COURSE_ID,UNIVERSITY_ID) REFERENCES COURSE(COURSE_ID,UNIVERSITY_ID)
+);
+
+CREATE TABLE BOOK(
+    TYPE VARCHAR(100),
+    PRICE_R INT,
+    PRICE_B INT,
+    QUANTITY INT,
+    TITLE VARCHAR(100),
+    ISBN VARCHAR(100) PRIMARY KEY,
+    PUBLISHER VARCHAR(100),
+    PUBLICATION_DATE DATE,
+    EDITION_NUMBER INT,
+    LANGUAGE VARCHAR(100),
+    FORMAT VARCHAR(100)
+);
+
+
+CREATE TABLE AUTHORS(
+    ISBN VARCHAR(100),
+    AUTHOR VARCHAR(100),
+    PRIMARY KEY(ISBN,AUTHOR),
+    FOREIGN KEY (ISBN ) REFERENCES BOOK (ISBN )
+);
+CREATE TABLE BOOK_CATEGORY(
+    CATEGORY VARCHAR(100),
+    ISBN VARCHAR(100),
+    SUBCATEGORY VARCHAR(100),
+    PRIMARY KEY(CATEGORY,ISBN,SUBCATEGORY),
+    FOREIGN KEY (ISBN ) REFERENCES BOOK(ISBN )
+);
+
+
+CREATE TABLE RECOMMEND(
+    COURSE_ID INT,
+    UNIVERSITY_ID INT,
+    ISBN VARCHAR(100),
+    PRIMARY KEY(COURSE_ID,UNIVERSITY_ID,ISBN),
+    FOREIGN KEY (COURSE_ID, UNIVERSITY_ID)
+REFERENCES COURSE(COURSE_ID, UNIVERSITY_ID),
+    FOREIGN KEY ( UNIVERSITY_ID) REFERENCES UNIVERSITY(UNIVERSITY_ID),
+    FOREIGN KEY (ISBN ) REFERENCES BOOK ( ISBN)
+);
+CREATE TABLE STUDENTS(
+    STUDENT_ID INT PRIMARY KEY,
+    NAME VARCHAR(100),
+    EMAIL VARCHAR(100),
+    PHONE_NUMBER INT,
+    ADDRESS VARCHAR(100),
+    DOB DATE,
+    UNIVERSITY_ID INT,
+    MAJOR_FIELD VARCHAR(100),
+    STATUS VARCHAR(100),
+    CURRENT_YEAROFSTUDY INT,
+    FOREIGN KEY(UNIVERSITY_ID) REFERENCES UNIVERSITY(UNIVERSITY_ID)
+);
+
+CREATE TABLE EMPLOYEE(
+    EMPLOYEE_ID INT PRIMARY KEY,
+    FIRST_NAME VARCHAR(100),
+    LAST_NAME VARCHAR(100),
+    GENDER VARCHAR(100),
+    SALARY INT,
+    AADHAR_NUMBER VARCHAR(100),
+    EMAIL VARCHAR(100),
+    ADDRESS VARCHAR(100),
+    TELEPHONE_NUMBER INT,
+    DESIGNATION VARCHAR(100)
+);
+
+CREATE TABLE USER(
+
+    USER_ID INT , 
+    PASSWORD INT,
+    DESIGNATION VARCHAR(100),
+    PRIMARY KEY(USER_ID,DESIGNATION)
+);
+
+CREATE TABLE CARTS(
+    STUDENT_ID INT,
+    STATUS1 VARCHAR(100),
+    CART_ID INT PRIMARY KEY,
+    DATE_CREATE DATE,
+    DATE_LAST_UPDATE DATE,
+    FOREIGN KEY ( STUDENT_ID) REFERENCES STUDENTS (STUDENT_ID )
+);
+CREATE TABLE CART_CONTAINS(
+    CART_ID INT,
+    ISBN VARCHAR(100),
+    PURCH_OPTION VARCHAR(10),
+    PRIMARY KEY (CART_ID,ISBN),
+    FOREIGN KEY ( CART_ID) REFERENCES CARTS ( CART_ID),
+    FOREIGN KEY ( ISBN) REFERENCES BOOK (ISBN )
+);
+CREATE TABLE ORDERS(
+    ORDER_ID INT PRIMARY KEY,
+    CART_ID INT,
+    DATE_CREATED DATE,
+    DATE_FULFILLED DATE,
+    SHIPPING_TYPE VARCHAR(100),
+    CREDIT_CARDNUMBER INT,
+    CREDIT_CARD_EXPIRY DATE,
+    HOLDER_NAME VARCHAR(100),
+    CARD_TYPE VARCHAR(100),
+    ORDER_STATUS VARCHAR(100),
+    FOREIGN KEY (CART_ID ) REFERENCES CARTS (CART_ID )
+);
+
+CREATE TABLE REVIEW_RATING(
+    ISBN VARCHAR(100),
+    STUDENT_ID INT,
+    REVIEW VARCHAR(300),
+    RATING INT,
+    PRIMARY KEY(ISBN,STUDENT_ID),
+    FOREIGN KEY ( ISBN) REFERENCES BOOK (ISBN ),
+    FOREIGN KEY (STUDENT_ID) REFERENCES STUDENTS (STUDENT_ID )
+);
+
+
+CREATE TABLE TICKET(
+    TYPE VARCHAR(100),
+    DATE_OF_CREATION DATE,
+    TICKET_ID INT PRIMARY KEY,
+    USER_ID INT,
+    CREATER VARCHAR(100),
+    TITLE VARCHAR(100),
+    PROBLEM_DESCRIPTION VARCHAR(300),
+    SOLUTION_DESCRIPTION VARCHAR(300),
+    COMPLETION_DATE DATE,
+    TICKET_STATUS VARCHAR(100),
+    FOREIGN KEY(USER_ID,CREATER) REFERENCES USER(USER_ID,DESIGNATION)
+);
+
+CREATE TABLE TICKET_FLOW(
+    TICKET_ID INT PRIMARY KEY,
+    ASSIGNED_BY VARCHAR(100),
+    ASSIGNED_TO VARCHAR(100),
+    ASSIGNED_BY_ID INT,
+    ASSIGNED_TO_ID INT,
+    FOREIGN KEY (TICKET_ID) REFERENCES TICKET(TICKET_ID),
+FOREIGN KEY (ASSIGNED_BY_ID) REFERENCES EMPLOYEE(EMPLOYEE_ID),
+FOREIGN KEY (ASSIGNED_TO_ID) REFERENCES EMPLOYEE(EMPLOYEE_ID)
+
+);
+
+CREATE TABLE CANCELLATION_REQUEST(
+    REQUEST_ID INT PRIMARY KEY,
+    ORDER_ID INT,
+    REQUEST_DATE DATE,
+    ORIGINAL_STATUS VARCHAR(100),
+    REQUEST_STATUS VARCHAR(100),
+    FOREIGN KEY (ORDER_ID) REFERENCES ORDERS(ORDER_ID)
+);
+
+INSERT INTO UNIVERSITY VALUES
+(1,'U1','City1','Rep1','u1@mail.com',900000001),
+(2,'U2','City2','Rep2','u2@mail.com',900000002),
+(3,'U3','City3','Rep3','u3@mail.com',900000003),
+(4,'U4','City4','Rep4','u4@mail.com',900000004),
+(5,'U5','City5','Rep5','u5@mail.com',900000005),
+(6,'U6','City6','Rep6','u6@mail.com',900000006),
+(7,'U7','City7','Rep7','u7@mail.com',900000007),
+(8,'U8','City8','Rep8','u8@mail.com',900000008),
+(9,'U9','City9','Rep9','u9@mail.com',900000009),
+(10,'U10','City10','Rep10','u10@mail.com',900000010),
+(11,'U11','City11','Rep11','u11@mail.com',900000011),
+(12,'U12','City12','Rep12','u12@mail.com',900000012),
+(13,'U13','City13','Rep13','u13@mail.com',900000013),
+(14,'U14','City14','Rep14','u14@mail.com',900000014),
+(15,'U15','City15','Rep15','u15@mail.com',900000015);
+
+
+INSERT INTO DEPARTMENT VALUES
+('CSE',1),('ECE',1),('ME',2),('CSE',2),('ECE',3),
+('CSE',4),('EEE',5),('CSE',6),('ECE',7),('CSE',8),
+('EEE',9),('CSE',10),('ECE',11),('CSE',12),('EEE',13);
+
+
+INSERT INTO INSTRUCTORS VALUES
+('Inst1',1,101,'CSE'),('Inst2',1,102,'ECE'),
+('Inst3',2,201,'CSE'),('Inst4',2,202,'ME'),
+('Inst5',3,301,'ECE'),('Inst6',4,401,'CSE'),
+('Inst7',5,501,'EEE'),('Inst8',6,601,'CSE'),
+('Inst9',7,701,'ECE'),('Inst10',8,801,'CSE'),
+('Inst11',9,901,'EEE'),('Inst12',10,1001,'CSE'),
+('Inst13',11,1101,'ECE'),('Inst14',12,1201,'CSE'),
+('Inst15',13,1301,'EEE');
+
+INSERT INTO COURSE VALUES
+(1,'DBMS',1,2025,'Sem6'),
+(2,'OS',1,2025,'Sem6'),
+(1,'DBMS',2,2025,'Sem6'),
+(2,'OS',2,2025,'Sem6'),
+(3,'CN',3,2025,'Sem5'),
+(4,'AI',4,2025,'Sem6'),
+(5,'ML',5,2025,'Sem5'),
+(6,'DSA',6,2025,'Sem4'),
+(7,'Java',7,2025,'Sem6'),
+(8,'Python',8,2025,'Sem5'),
+(9,'Cloud',9,2025,'Sem6'),
+(10,'Security',10,2025,'Sem5'),
+(11,'BigData',11,2025,'Sem6'),
+(12,'Compiler',12,2025,'Sem5'),
+(13,'Networks',13,2025,'Sem6');
+
+INSERT INTO TEACHES VALUES
+(101,1,1),(102,2,1),(201,1,2),(202,2,2),(301,3,3),
+(401,4,4),(501,5,5),(601,6,6),(701,7,7),(801,8,8),
+(901,9,9),(1001,10,10),(1101,11,11),(1201,12,12),(1301,13,13);
+
+INSERT INTO COURSE_OFFEREDBY VALUES
+(1,'CSE',1),(2,'ECE',1),(1,'CSE',2),(2,'ME',2),(3,'ECE',3),
+(4,'CSE',4),(5,'EEE',5),(6,'CSE',6),(7,'ECE',7),(8,'CSE',8),
+(9,'EEE',9),(10,'CSE',10),(11,'ECE',11),(12,'CSE',12),(13,'EEE',13);
+
+INSERT INTO BOOK VALUES
+('NEW',50,500,10,'DBMS','ISBN001','P1','2020-01-01',1,'Eng','HARDCOPY'),
+('NEW',60,600,8,'OS','ISBN002','P2','2020-02-01',2,'Eng','HARDCOPY'),
+('USED',20,200,5,'CN','ISBN003','P3','2019-01-01',1,'Eng','SOFTCOPY'),
+('NEW',70,700,6,'AI','ISBN004','P4','2021-01-01',3,'Eng','HARDCOPY'),
+('USED',15,150,7,'ML','ISBN005','P5','2018-01-01',2,'Eng','SOFTCOPY'),
+('NEW',80,800,9,'DSA','ISBN006','P6','2022-01-01',4,'Eng','HARDCOPY'),
+('NEW',55,550,10,'Java','ISBN007','P7','2020-05-01',2,'Eng','HARDCOPY'),
+('USED',18,180,5,'Python','ISBN008','P8','2019-03-01',1,'Eng','SOFTCOPY'),
+('NEW',90,900,4,'Cloud','ISBN009','P9','2021-06-01',3,'Eng','HARDCOPY'),
+('NEW',65,650,7,'Security','ISBN010','P10','2020-07-01',2,'Eng','HARDCOPY'),
+('USED',22,220,6,'BigData','ISBN011','P11','2019-08-01',1,'Eng','SOFTCOPY'),
+('NEW',75,750,8,'Compiler','ISBN012','P12','2022-02-01',3,'Eng','HARDCOPY'),
+('NEW',50,500,9,'DBMS Adv','ISBN013','P13','2021-09-01',2,'Eng','HARDCOPY'),
+('USED',30,300,4,'OS Adv','ISBN014','P14','2018-10-01',1,'Eng','SOFTCOPY'),
+('NEW',85,850,5,'AI Adv','ISBN015','P15','2023-01-01',4,'Eng','HARDCOPY');
+
+
+INSERT INTO AUTHORS VALUES
+('ISBN001','A1'),('ISBN002','A2'),('ISBN003','A3'),
+('ISBN004','A4'),('ISBN005','A5'),('ISBN006','A6'),
+('ISBN007','A7'),('ISBN008','A8'),('ISBN009','A9'),
+('ISBN010','A10'),('ISBN011','A11'),('ISBN012','A12'),
+('ISBN013','A13'),('ISBN014','A14'),('ISBN015','A15');
+
+INSERT INTO BOOK_CATEGORY VALUES
+('CS','ISBN001','DBMS'),('CS','ISBN002','OS'),('CS','ISBN003','CN'),
+('CS','ISBN004','AI'),('CS','ISBN005','ML'),('CS','ISBN006','DSA'),
+('CS','ISBN007','Java'),('CS','ISBN008','Python'),('CS','ISBN009','Cloud'),
+('CS','ISBN010','Security'),('CS','ISBN011','BigData'),('CS','ISBN012','Compiler'),
+('CS','ISBN013','DBMS'),('CS','ISBN014','OS'),('CS','ISBN015','AI');
+
+INSERT INTO RECOMMEND VALUES
+(1,1,'ISBN001'),(2,1,'ISBN002'),(1,2,'ISBN001'),(2,2,'ISBN002'),
+(3,3,'ISBN003'),(4,4,'ISBN004'),(5,5,'ISBN005'),
+(6,6,'ISBN006'),(7,7,'ISBN007'),(8,8,'ISBN008'),
+(9,9,'ISBN009'),(10,10,'ISBN010'),(11,11,'ISBN011'),
+(12,12,'ISBN012'),(13,13,'ISBN013');
+
+INSERT INTO STUDENTS VALUES
+(1,'S1','s1@mail.com',9001,'C1','2003-01-01',1,'CSE','UG',3),
+(2,'S2','s2@mail.com',9002,'C2','2003-02-01',2,'CSE','UG',3),
+(3,'S3','s3@mail.com',9003,'C3','2003-03-01',3,'ECE','UG',2),
+(4,'S4','s4@mail.com',9004,'C4','2003-04-01',4,'EEE','UG',1),
+(5,'S5','s5@mail.com',9005,'C5','2003-05-01',5,'CSE','UG',4),
+(6,'S6','s6@mail.com',9006,'C6','2003-06-01',6,'CSE','UG',3),
+(7,'S7','s7@mail.com',9007,'C7','2003-07-01',7,'ECE','UG',2),
+(8,'S8','s8@mail.com',9008,'C8','2003-08-01',8,'EEE','UG',1),
+(9,'S9','s9@mail.com',9009,'C9','2003-09-01',9,'CSE','UG',4),
+(10,'S10','s10@mail.com',9010,'C10','2003-10-01',10,'CSE','UG',3),
+(11,'S11','s11@mail.com',9011,'C11','2003-11-01',11,'CSE','UG',3),
+(12,'S12','s12@mail.com',9012,'C12','2003-12-01',12,'ECE','UG',2),
+(13,'S13','s13@mail.com',9013,'C13','2003-01-15',13,'EEE','UG',1),
+(14,'S14','s14@mail.com',9014,'C14','2003-02-15',14,'CSE','UG',4),
+(15,'S15','s15@mail.com',9015,'C15','2003-03-15',15,'CSE','UG',3);
+
+INSERT INTO CARTS VALUES
+(1,'Active',101,'2026-04-01','2026-04-02'),
+(2,'Active',102,'2026-04-01','2026-04-02'),
+(3,'Active',103,'2026-04-01','2026-04-02'),
+(4,'Active',104,'2026-04-01','2026-04-02'),
+(5,'Active',105,'2026-04-01','2026-04-02'),
+(6,'Active',106,'2026-04-01','2026-04-02'),
+(7,'Active',107,'2026-04-01','2026-04-02'),
+(8,'Active',108,'2026-04-01','2026-04-02'),
+(9,'Active',109,'2026-04-01','2026-04-02'),
+(10,'Active',110,'2026-04-01','2026-04-02'),
+(11,'Active',111,'2026-04-01','2026-04-02'),
+(12,'Active',112,'2026-04-01','2026-04-02'),
+(13,'Active',113,'2026-04-01','2026-04-02'),
+(14,'Active',114,'2026-04-01','2026-04-02'),
+(15,'Active',115,'2026-04-01','2026-04-02');
+
+INSERT INTO CART_CONTAINS VALUES
+(101,'ISBN001','Buy'),
+(102,'ISBN002','Rent'),
+(103,'ISBN003','Buy'),
+(104,'ISBN004','Rent'),
+(105,'ISBN005','Buy'),
+(106,'ISBN006','Rent'),
+(107,'ISBN007','Buy'),
+(108,'ISBN008','Rent'),
+(109,'ISBN009','Buy'),
+(110,'ISBN010','Rent'),
+(111,'ISBN011','Buy'),
+(112,'ISBN012','Rent'),
+(113,'ISBN013','Buy'),
+(114,'ISBN014','Rent'),
+(115,'ISBN015','Buy');
+
+INSERT INTO ORDERS VALUES
+(1001,101,'2026-04-05','2026-04-06','standard',111111111,'2028-01-01','S1','VISA','shipped'),
+(1002,102,'2026-04-05','2026-04-06','2-day',222222222,'2028-02-01','S2','MASTER','processed'),
+(1003,103,'2026-04-05','2026-04-06','1-day',333333333,'2028-03-01','S3','VISA','new'),
+(1004,104,'2026-04-05','2026-04-06','standard',444444444,'2028-04-01','S4','MASTER','shipped'),
+(1005,105,'2026-04-05','2026-04-06','2-day',555555555,'2028-05-01','S5','VISA','processed'),
+(1006,106,'2026-04-05','2026-04-06','1-day',666666666,'2028-06-01','S6','MASTER','new'),
+(1007,107,'2026-04-05','2026-04-06','standard',777777777,'2028-07-01','S7','VISA','shipped'),
+(1008,108,'2026-04-05','2026-04-06','2-day',888888888,'2028-08-01','S8','MASTER','processed'),
+(1009,109,'2026-04-05','2026-04-06','1-day',999999999,'2028-09-01','S9','VISA','new'),
+(1010,110,'2026-04-05','2026-04-06','standard',133334444,'2028-10-01','S10','MASTER','shipped'),
+(1011,111,'2026-04-05','2026-04-06','2-day',222445555,'2028-11-01','S11','VISA','processed'),
+(1012,112,'2026-04-05','2026-04-06','1-day',333556666,'2028-12-01','S12','MASTER','new'),
+(1013,113,'2026-04-05','2026-04-06','standard',466667777,'2029-01-01','S13','VISA','shipped'),
+(1014,114,'2026-04-05','2026-04-06','2-day',555578888,'2029-02-01','S14','MASTER','processed'),
+(1015,115,'2026-04-05','2026-04-06','1-day',666677889,'2029-03-01','S15','VISA','new');
+
+INSERT INTO REVIEW_RATING VALUES
+('ISBN001',1,'Good',5),
+('ISBN002',2,'Nice',4),
+('ISBN003',3,'Average',3),
+('ISBN004',4,'Good',5),
+('ISBN005',5,'Nice',4),
+('ISBN006',6,'Average',3),
+('ISBN007',7,'Good',5),
+('ISBN008',8,'Nice',4),
+('ISBN009',9,'Average',3),
+('ISBN010',10,'Good',5),
+('ISBN011',11,'Nice',4),
+('ISBN012',12,'Average',3),
+('ISBN013',13,'Good',5),
+('ISBN014',14,'Nice',4),
+('ISBN015',15,'Average',3);
+
+INSERT INTO EMPLOYEE VALUES
+(1,'E1','L1','M',50000,'A1','e1@mail.com','C1',9001,'Customer Support'),
+(2,'E2','L2','F',60000,'A2','e2@mail.com','C2',9002,'Administrator'),
+(3,'E3','L3','M',55000,'A3','e3@mail.com','C3',9003,'Customer Support'),
+(4,'E4','L4','F',70000,'A4','e4@mail.com','C4',9004,'Administrator'),
+(5,'E5','L5','M',52000,'A5','e5@mail.com','C5',9005,'Customer Support'),
+(6,'E6','L6','F',65000,'A6','e6@mail.com','C6',9006,'Administrator'),
+(7,'E7','L7','M',58000,'A7','e7@mail.com','C7',9007,'Customer Support'),
+(8,'E8','L8','F',72000,'A8','e8@mail.com','C8',9008,'Administrator'),
+(9,'E9','L9','M',53000,'A9','e9@mail.com','C9',9009,'Customer Support'),
+(10,'E10','L10','F',75000,'A10','e10@mail.com','C10',9010,'Administrator'),
+(11,'E11','L11','M',54000,'A11','e11@mail.com','C11',9011,'Customer Support'),
+(12,'E12','L12','F',76000,'A12','e12@mail.com','C12',9012,'Administrator'),
+(13,'E13','L13','M',56000,'A13','e13@mail.com','C13',9013,'Customer Support'),
+(14,'E14','L14','F',77000,'A14','e14@mail.com','C14',9014,'Administrator'),
+(15,'E15','L15','M',59000,'A15','e15@mail.com','C15',9015,'Customer Support'),
+(100,'Super','Admin','M',100000,'A100','super@mail.com','HQ',9999,'Super Administrator');
+
+INSERT INTO USER VALUES
+(1,1111,'Student'),
+(2,2222,'Student'),
+(3,3333,'Student'),
+(4,4444,'Student'),
+(5,5555,'Student'),
+(6,6666,'Student'),
+(7,7777,'Student'),
+(8,8888,'Student'),
+(9,9999,'Student'),
+(10,1010,'Student'),
+(11,1112,'Student'),
+(12,1212,'Student'),
+(13,1313,'Student'),
+(14,1414,'Student'),
+(15,1515,'Student'),
+(1,9001,'Customer Support'),
+(3,9003,'Customer Support'),
+(5,9005,'Customer Support'),
+(7,9007,'Customer Support'),
+(9,9009,'Customer Support'),
+(11,9011,'Customer Support'),
+(13,9013,'Customer Support'),
+(15,9015,'Customer Support'),
+(2,9002,'Administrator'),
+(4,9004,'Administrator'),
+(6,9006,'Administrator'),
+(8,9008,'Administrator'),
+(10,9010,'Administrator'),
+(12,9012,'Administrator'),
+(14,9014,'Administrator'),
+(100,9999,'Super Administrator'),
+(1,5001,'University Representative'),
+(2,5002,'University Representative'),
+(3,5003,'University Representative'),
+(4,5004,'University Representative'),
+(5,5005,'University Representative'),
+(6,5006,'University Representative'),
+(7,5007,'University Representative'),
+(8,5008,'University Representative'),
+(9,5009,'University Representative'),
+(10,5010,'University Representative'),
+(11,5011,'University Representative'),
+(12,5012,'University Representative'),
+(13,5013,'University Representative'),
+(14,5014,'University Representative'),
+(15,5015,'University Representative');
+
+INSERT INTO TICKET VALUES
+('PRODUCT','2026-04-01',5001,1,'Student','Issue1','Problem1',NULL,NULL,'assigned'),
+('CART','2026-04-02',5002,2,'Student','Issue2','Problem2',NULL,NULL,'assigned'),
+('ORDER','2026-04-03',5003,3,'Student','Issue3','Problem3',NULL,NULL,'assigned'),
+('PROFILE','2026-04-04',5004,4,'Student','Issue4','Problem4',NULL,NULL,'assigned'),
+('OTHER','2026-04-05',5005,5,'Student','Issue5','Problem5',NULL,NULL,'assigned'),
+('PRODUCT','2026-04-06',5006,1,'Customer Support','Internal Issue1','System bug',NULL,NULL,'assigned'),
+('CART','2026-04-07',5007,3,'Customer Support','Internal Issue2','Cart failure',NULL,NULL,'assigned'),
+('ORDER','2026-04-08',5008,5,'Customer Support','Internal Issue3','Order mismatch',NULL,NULL,'assigned'),
+('PROFILE','2026-04-09',5009,7,'Customer Support','Internal Issue4','Profile bug',NULL,NULL,'assigned'),
+('OTHER','2026-04-10',5010,9,'Customer Support','Internal Issue5','Unknown issue',NULL,NULL,'assigned'),
+('PRODUCT','2026-04-11',5011,6,'Student','Issue11','Problem11',NULL,NULL,'new'),
+('CART','2026-04-12',5012,7,'Student','Issue12','Problem12',NULL,NULL,'new'),
+('ORDER','2026-04-13',5013,8,'Student','Issue13','Problem13',NULL,NULL,'new'),
+('PROFILE','2026-04-14',5014,9,'Student','Issue14','Problem14',NULL,NULL,'new'),
+('OTHER','2026-04-15',5015,10,'Student','Issue15','Problem15',NULL,NULL,'new');
+
+INSERT INTO TICKET_FLOW VALUES
+(5001,'Customer Support','Administrator',1,2),
+(5002,'Customer Support','Administrator',3,4),
+(5003,'Customer Support','Administrator',5,6),
+(5004,'Customer Support','Administrator',7,8),
+(5005,'Customer Support','Administrator',9,10),
+(5006,'Customer Support','Administrator',11,12),
+(5007,'Customer Support','Administrator',13,14),
+(5008,'Customer Support','Administrator',15,2),
+(5009,'Customer Support','Administrator',1,4),
+(5010,'Customer Support','Administrator',3,6);
