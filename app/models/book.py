@@ -12,6 +12,7 @@ class Book(Base):
     __tablename__ = "BOOK"
 
     isbn: Mapped[str] = mapped_column(
+        "ISBN",#
         String(100),
         primary_key=True,
         nullable=False,
