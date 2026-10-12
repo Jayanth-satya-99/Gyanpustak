@@ -7,6 +7,7 @@ from app.core.security import (
     verify_password,
 )
 from app.database.connection import get_db
+from app.models.student import Student
 from app.models.user import AuthCredential
 from app.schemas.auth import (
     CurrentUserResponse,
@@ -44,16 +45,48 @@ def login(
             detail="Invalid credentials",
         )
 
-    valid = verify_password(
+    if not auth.is_active:
+        raise HTTPException(
+            status_code=403,
+            detail="This account has been deactivated.",
+        )
+
+    if not verify_password(
         credentials.password,
         auth.password_hash,
-    )
-
-    if not valid:
+    ):
         raise HTTPException(
             status_code=401,
             detail="Invalid credentials",
         )
+
+    # Student accounts require explicit approval.
+    if auth.designation == "Student":
+        student = (
+            db.query(Student)
+            .filter(Student.student_id == auth.user_id)
+            .first()
+        )
+
+        if student is None:
+            raise HTTPException(
+                status_code=403,
+                detail="Student registration was not found.",
+            )
+
+        if student.approval_status != "APPROVED":
+            if student.approval_status == "REJECTED":
+                detail = "Your registration has been rejected."
+            else:
+                detail = (
+                    "Your registration is pending "
+                    "Super Administrator approval."
+                )
+
+            raise HTTPException(
+                status_code=403,
+                detail=detail,
+            )
 
     token = create_access_token(
         user_id=auth.user_id,

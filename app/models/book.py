@@ -1,18 +1,16 @@
 from datetime import date
 
 from sqlalchemy import Date, Integer, String
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
-
-class Base(DeclarativeBase):
-    pass
+from app.database.base import Base
 
 
 class Book(Base):
     __tablename__ = "BOOK"
 
     isbn: Mapped[str] = mapped_column(
-        "ISBN",#
+        "ISBN",
         String(100),
         primary_key=True,
         nullable=False,

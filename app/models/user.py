@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String
+from sqlalchemy import Boolean, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.base import Base
@@ -19,7 +19,7 @@ class User(Base):
         primary_key=True,
     )
 
-    password: Mapped[int] = mapped_column(
+    password: Mapped[int | None] = mapped_column(
         "PASSWORD",
         Integer,
         nullable=True,
@@ -45,4 +45,11 @@ class AuthCredential(Base):
         "PASSWORD_HASH",
         String(255),
         nullable=False,
+    )
+
+    is_active: Mapped[bool] = mapped_column(
+        "IS_ACTIVE",
+        Boolean,
+        nullable=False,
+        default=True,
     )

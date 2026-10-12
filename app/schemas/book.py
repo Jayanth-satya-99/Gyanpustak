@@ -15,7 +15,14 @@ class BookResponse(BaseModel):
     edition_number: int | None
     language: str | None
     format: str | None
+    average_rating: float | None = None
+    total_reviews: int = 0
 
-    model_config = ConfigDict(
-        from_attributes=True
-    )
+    model_config = ConfigDict(from_attributes=True)
+
+
+class BookListResponse(BaseModel):
+    total: int
+    skip: int
+    limit: int
+    items: list[BookResponse]
